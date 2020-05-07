@@ -4,7 +4,8 @@
   "description": "A highly extensible genetic algorithm library for JavaScript",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel ./src -d ./lib"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/adrianmarkperea/genie/issues"
   },
-  "homepage": "https://github.com/adrianmarkperea/genie#readme"
+  "homepage": "https://github.com/adrianmarkperea/genie#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6"
+  }
 }
