@@ -1,7 +1,18 @@
-function sayHiTo(name) {
-  return `Hi, ${name}`;
+const digitsOnly = /^\d+$/;
+
+function maskUSPhone(phone) {
+  if (!phone || typeof phone !== 'string') {
+    return null;
+  }
+
+  if (digitsOnly.test(phone) === false || phone.length !== 10) {
+    return phone;
+  }
+
+  const codeArea = phone.substring(0, 3);
+  const prefix = phone.substring(3, 6);
+  const suffix = phone.substring(6, 10);
+  return `(${codeArea}) ${prefix}-${suffix}`;
 }
 
-const message = sayHiTo('bruno');
-
-console.log(message);
+export default maskUSPhone;
