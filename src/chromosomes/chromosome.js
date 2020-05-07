@@ -7,16 +7,18 @@ class Chromosome {
     }
   }
 
-  fromGenes(genes) {
-    this.length = genes.length;
-    this.genes = genes;
-    return this;
+  static fromGenes(genes) {
+    const chromosome = new this();
+    chromosome.length = genes.length;
+    chromosome.genes = genes;
+    return chromosome;
   }
 
-  fromLength(length) {
-    this.length = length;
-    this.genes = Array(length).fill(null).map(this.generate);
-    return this;
+  static fromLength(length) {
+    const chromosome = new this();
+    chromosome.length = length;
+    chromosome.genes = Array(length).fill(null).map(chromosome.generate);
+    return chromosome;
   }
 
   generate() {
