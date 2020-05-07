@@ -2,11 +2,12 @@
   "name": "genie",
   "version": "0.0.1",
   "description": "A highly extensible genetic algorithm library for JavaScript",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "nyc mocha",
     "build": "npm run lint && babel ./src -d ./lib",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
