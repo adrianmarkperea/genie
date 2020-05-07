@@ -1,0 +1,26 @@
+{
+  "name": "genie",
+  "version": "0.0.1",
+  "description": "A highly extensible genetic algorithm library for JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrianmarkperea/genie.git"
+  },
+  "keywords": [
+    "javascript",
+    "genetic-algorithms",
+    "evolution",
+    "evolutionary",
+    "optimization"
+  ],
+  "author": "Adrian Mark Perea",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrianmarkperea/genie/issues"
+  },
+  "homepage": "https://github.com/adrianmarkperea/genie#readme"
+}
