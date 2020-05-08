@@ -165,8 +165,20 @@ describe('ga', function () {
   });
 
   describe('#getCrossoverFunction()', function () {
-    it('Should return a function', function () {
+    it('Should return a function when called with `onepoint`', function () {
       const crossoverFunc = ga.getCrossoverFunction('onepoint');
+
+      assert.typeOf(crossoverFunc, 'function');
+    });
+
+    it('Should return a function when called with `multipoint`', function () {
+      const crossoverFunc = ga.getCrossoverFunction('multipoint');
+
+      assert.typeOf(crossoverFunc, 'function');
+    });
+
+    it('Should return a function when called with `uniform`', function () {
+      const crossoverFunc = ga.getCrossoverFunction('uniform');
 
       assert.typeOf(crossoverFunc, 'function');
     });
