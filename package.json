@@ -5,8 +5,9 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "nyc mocha",
-    "build": "npm run lint && babel ./src -d ./lib",
+    "build": "npm run lint && npm run clean && babel ./src -d ./lib",
     "lint": "eslint ./src",
+    "clean": "rm -rf ./lib",
     "prepublishOnly": "npm run build"
   },
   "repository": {
