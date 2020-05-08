@@ -1,3 +1,5 @@
+import { randBetween } from './utils/random';
+
 export function crossover(parentOne, parentTwo, type) {
   const crossoverFunc = getCrossoverFunction(type);
   const childDna = _getChildDna(parentOne, parentTwo, crossoverFunc);
@@ -28,7 +30,7 @@ export function getCrossoverFunction(type) {
 }
 
 export function onepoint(chromosomeOne, chromosomeTwo) {
-  const point = Math.floor(Math.random() * chromosomeOne.length);
+  const point = randBetween(0, chromosomeOne.length);
   return _onepoint(chromosomeOne, chromosomeTwo, point);
 }
 
@@ -42,10 +44,8 @@ export function _onepoint(chromosomeOne, chromosomeTwo, point) {
 }
 
 export function multipoint(chromosomeOne, chromosomeTwo) {
-  const pointOne = Math.floor(Math.random() * chromosomeOne.length);
-  const pointTwo = Math.floor(
-    Math.random() * (chromosomeOne.length - pointOne + 1) + pointOne
-  );
+  const pointOne = randBetween(0, chromosomeOne.length);
+  const pointTwo = randBetween(pointOne, chromosomeOne.length);
   return _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo);
 }
 
