@@ -57,3 +57,15 @@ export function _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo) {
 
   return chromosomeOne.constructor.fromGenes(childGenes);
 }
+
+export function uniform(chromosomeOne, chromosomeTwo) {}
+
+export function _uniform(chromosomeOne, chromosomeTwo, probabilities) {
+  const childGenes = chromosomeOne.genes.map((geneOne, i) => {
+    const geneTwo = chromosomeTwo.genes[i];
+    const probability = probabilities[i];
+    return probability < 0.5 ? geneOne : geneTwo;
+  });
+
+  return chromosomeOne.constructor.fromGenes(childGenes);
+}

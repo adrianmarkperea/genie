@@ -194,7 +194,7 @@ describe('ga', function () {
   });
 
   describe('#_multipoint()', function () {
-    it('Should swap genes between point one and point two', () => {
+    it('Should swap genes between point one and point two', function () {
       const chromosomeOne = ChromosomeStub.fromGenes([
         'A',
         'A',
@@ -223,6 +223,19 @@ describe('ga', function () {
       );
 
       assert.sameOrderedMembers(childChromosome.genes, expected);
+    });
+  });
+
+  describe('#uniform()', function () {
+    it('Should do uniform crossover based on probabilities', function () {
+      const chromosomeOne = ChromosomeStub.fromGenes(['A', 'A', 'A', 'A']);
+      const chromosomeTwo = ChromosomeStub.fromGenes(['B', 'B', 'B', 'B']);
+      const probabilities = [0.2, 0.5, 0.3, 0.9];
+      const expected = ['A', 'B', 'A', 'B'];
+
+      const child = ga._uniform(chromosomeOne, chromosomeTwo, probabilities);
+
+      assert.sameOrderedMembers(child.genes, expected);
     });
   });
 });
