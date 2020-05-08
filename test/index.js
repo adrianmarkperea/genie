@@ -1,6 +1,7 @@
 import Chromosome from '../src/chromosomes/chromosome';
 import ChromosomeStub from './chromosomestub';
 import Individual from '../src/individual';
+import * as ga from '../src/ga';
 
 import chai from 'chai';
 const { assert } = chai;
@@ -135,6 +136,24 @@ describe('Individual', function () {
 
       assert.instanceOf(likeness._dna[0], ChromosomeStub);
       assert.instanceOf(likeness._dna[1], ChromosomeStub);
+    });
+  });
+});
+
+describe('ga', function () {
+  describe('#getCrossoverFunction()', function () {
+    it('Should return a function', function () {
+      const crossoverFunc = ga.getCrossoverFunction('onepoint');
+
+      assert.typeOf(crossoverFunc, 'function');
+    });
+
+    it('Should throw an error when given a wrong type', function () {
+      assert.throws(() => ga.getCrossoverFunction('RASDIOAJ'));
+    });
+
+    it('Should throw an error when not given a type', function () {
+      assert.throws(() => ga.getCrossoverFunction());
     });
   });
 });
