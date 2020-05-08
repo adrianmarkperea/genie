@@ -192,4 +192,37 @@ describe('ga', function () {
       assert.sameOrderedMembers(childChromosome.genes, expected);
     });
   });
+
+  describe('#_multipoint()', function () {
+    it('Should swap genes between point one and point two', () => {
+      const chromosomeOne = ChromosomeStub.fromGenes([
+        'A',
+        'A',
+        'A',
+        'A',
+        'A',
+        'A',
+      ]);
+      const chromosomeTwo = ChromosomeStub.fromGenes([
+        'B',
+        'B',
+        'B',
+        'B',
+        'B',
+        'B',
+      ]);
+      const pointOne = 2;
+      const pointTwo = 4;
+      const expected = ['A', 'A', 'B', 'B', 'A', 'A'];
+
+      const childChromosome = ga._multipoint(
+        chromosomeOne,
+        chromosomeTwo,
+        pointOne,
+        pointTwo
+      );
+
+      assert.sameOrderedMembers(childChromosome.genes, expected);
+    });
+  });
 });

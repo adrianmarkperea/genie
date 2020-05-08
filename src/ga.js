@@ -20,6 +20,8 @@ export function getCrossoverFunction(type) {
   switch (type) {
     case 'onepoint':
       return onepoint;
+    case 'multipoint':
+      return multipoint;
     default:
       throw new Error(`type ${type} is not a valid crossover function type`);
   }
@@ -34,6 +36,23 @@ export function _onepoint(chromosomeOne, chromosomeTwo, point) {
   const childGenes = chromosomeOne.genes.map((geneOne, i) => {
     const geneTwo = chromosomeTwo.genes[i];
     return i < point ? geneOne : geneTwo;
+  });
+
+  return chromosomeOne.constructor.fromGenes(childGenes);
+}
+
+export function multipoint(chromosomeOne, chromosomeTwo) {
+  const pointOne = Math.floor(Math.random() * chromosomeOne.length);
+  const pointTwo = Math.floor(
+    Math.random() * (chromosomeOne.length - pointOne + 1) + pointOne
+  );
+  return _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo);
+}
+
+export function _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo) {
+  const childGenes = chromosomeOne.genes.map((geneOne, i) => {
+    const geneTwo = chromosomeTwo.genes[i];
+    return i < pointOne || i >= pointTwo ? geneOne : geneTwo;
   });
 
   return chromosomeOne.constructor.fromGenes(childGenes);
