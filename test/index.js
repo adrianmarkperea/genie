@@ -14,6 +14,7 @@ describe('Chromosome ABC', function () {
 
 describe('MockChromosome', function () {
   const genes = ['A', 'A', 'A', 'A', 'A'];
+  const badGenes = ['A', 'B', 'C'];
   const length = 5;
 
   it('Should not throw an error when instantiated', function () {
@@ -25,6 +26,10 @@ describe('MockChromosome', function () {
 
     assert.sameOrderedMembers(chromosome.genes, genes);
     assert.equal(chromosome.length, length);
+  });
+
+  it('Should throw an error when supplied with genes not part of charset', function () {
+    assert.throws(() => ChromosomeStub.fromGenes(badGenes));
   });
 
   it('Should be able to be created from length', function () {

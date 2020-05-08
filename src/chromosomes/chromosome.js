@@ -8,9 +8,14 @@ class Chromosome {
   }
 
   static fromGenes(genes) {
+    if (!genes.every((gene) => this.charset.includes(gene))) {
+      throw new Error('Supplied genes is not compatible with charset');
+    }
+
     const chromosome = new this();
     chromosome.length = genes.length;
     chromosome.genes = genes;
+
     return chromosome;
   }
 

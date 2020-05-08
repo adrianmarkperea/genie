@@ -1,6 +1,6 @@
 import Chromosome from '../src/chromosomes/chromosome';
 
-class ChromsomeStub extends Chromosome {
+class ChromosomeStub extends Chromosome {
   constructor() {
     super();
   }
@@ -10,4 +10,6 @@ class ChromsomeStub extends Chromosome {
   }
 }
 
-export default ChromsomeStub;
+ChromosomeStub.charset = ['A', 'B'];
+
+export default ChromosomeStub;
