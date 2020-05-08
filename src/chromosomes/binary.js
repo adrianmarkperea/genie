@@ -11,3 +11,5 @@ class BinaryChromosome extends Chromosome {
 }
 
 BinaryChromosome.charset = ['0', '1'];
+
+export default BinaryChromosome;
