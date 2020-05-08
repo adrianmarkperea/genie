@@ -5,14 +5,9 @@ export function crossover(parentOne, parentTwo, type) {
 }
 
 function _getChildDna(parentOne, parentTwo, crossoverFunc) {
-  const childDna = [];
-  parentOne.dna.forEach((parentOneChromosome, i) => {
+  const childDna = parentOne.dna.map((parentOneChromosome, i) => {
     const parentTwoChromosome = parentTwo.dna[i];
-    const childChromosome = crossoverFunc(
-      parentOneChromosome,
-      parentTwoChromosome
-    );
-    childDna.push(childChromosome);
+    return crossoverFunc(parentOneChromosome, parentTwoChromosome);
   });
   return childDna;
 }
