@@ -3,11 +3,10 @@ export function getSelectionFunction(type) {
     throw new Error('No type was supplied');
   }
 
+  // TODO: implement other types of selection methods
   switch (type) {
     case 'rws':
       return rouletteWheel;
-    case 'sus':
-      return null;
     default:
       throw new Error(`type ${type} is not a valid selection function type`);
   }
