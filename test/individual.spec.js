@@ -1,4 +1,4 @@
-import Individual from '../src/individual';
+import { Individual } from '../src/individual';
 import ChromosomeStub from './chromosome-stub';
 
 import chai from 'chai';

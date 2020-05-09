@@ -1,5 +1,5 @@
 import ChromosomeStub from './chromosome-stub';
-import Individual from '../src/individual';
+import { Individual } from '../src/individual';
 import * as ga from '../src/ga';
 
 import chai from 'chai';
