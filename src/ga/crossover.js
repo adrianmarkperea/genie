@@ -1,17 +1,9 @@
-import { randBetween } from './utils/random';
+import { randBetween } from '../utils/random';
 
 export function crossover(parentOne, parentTwo, type) {
   const crossoverFunc = getCrossoverFunction(type);
   const childDna = _getChildDna(parentOne, parentTwo, crossoverFunc);
   return new parentOne.constructor(childDna);
-}
-
-function _getChildDna(parentOne, parentTwo, crossoverFunc) {
-  const childDna = parentOne.dna.map((parentOneChromosome, i) => {
-    const parentTwoChromosome = parentTwo.dna[i];
-    return crossoverFunc(parentOneChromosome, parentTwoChromosome);
-  });
-  return childDna;
 }
 
 export function getCrossoverFunction(type) {
@@ -29,6 +21,14 @@ export function getCrossoverFunction(type) {
     default:
       throw new Error(`type ${type} is not a valid crossover function type`);
   }
+}
+
+function _getChildDna(parentOne, parentTwo, crossoverFunc) {
+  const childDna = parentOne.dna.map((parentOneChromosome, i) => {
+    const parentTwoChromosome = parentTwo.dna[i];
+    return crossoverFunc(parentOneChromosome, parentTwoChromosome);
+  });
+  return childDna;
 }
 
 export function onepoint(chromosomeOne, chromosomeTwo) {
@@ -75,14 +75,4 @@ export function _uniform(chromosomeOne, chromosomeTwo, probabilities) {
   });
 
   return chromosomeOne.constructor.fromGenes(childGenes);
-}
-
-export function mutate(child, rate) {
-  child.dna = child.dna.map((chromosome) => {
-    const mutatedGenes = chromosome.genes.map((gene) =>
-      Math.random() < rate ? chromosome.mutate(gene) : gene
-    );
-
-    return chromosome.constructor.fromGenes(mutatedGenes);
-  });
 }

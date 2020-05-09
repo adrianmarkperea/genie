@@ -1,4 +1,4 @@
-import Chromosome from '../src/chromosomes/chromosome';
+import { Chromosome } from '../src/chromosomes';
 import ChromosomeStub from './chromosome-stub';
 
 import chai from 'chai';
