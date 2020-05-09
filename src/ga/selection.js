@@ -1,4 +1,4 @@
-export function getCrossoverFunction(type) {
+export function getSelectionFunction(type) {
   if (type === undefined) {
     throw new Error('No type was supplied');
   }
