@@ -1,5 +1,5 @@
 {
-  "name": "genie.js",
+  "name": "@adrianperea/genie.js",
   "version": "0.1.0",
   "description": "A highly extensible genetic algorithm library for JavaScript",
   "main": "lib/index.js",
