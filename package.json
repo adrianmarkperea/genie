@@ -1,6 +1,6 @@
 {
   "name": "genie",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A highly extensible genetic algorithm library for JavaScript",
   "main": "lib/index.js",
   "scripts": {
