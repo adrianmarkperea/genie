@@ -38,6 +38,9 @@ class Simulation {
     this.currentGeneration = 1;
     this.finished = false;
     this.updateFinished = false;
+    this.top = null;
+    this.averageFitness = 0;
+    this.history = [];
 
     this.onInit = onInit;
     this.onUpdate = onUpdate;
@@ -80,13 +83,16 @@ class Simulation {
     this.population.forEach(
       (individual) => (individual.fitness = this.calculateFitness(individual))
     );
+
+    this.top = this.getTopIndividual(this.population);
+    this.averageFitness = this._getAverageFitness();
+
     this.onCalculateFitness && this.onCalculateFitness(this._getState());
   }
 
   _evaluate() {
-    const top = this.getTopIndividual(this.population);
     if (
-      this.shouldFinish(top) ||
+      this.shouldFinish(this.top) ||
       this.currentGeneration === this.maxGenerations
     ) {
       this.finished = true;
@@ -94,6 +100,14 @@ class Simulation {
     } else {
       this._reset();
     }
+  }
+
+  _getAverageFitness() {
+    return this.population.reduce(
+      (average, individual, _, population) =>
+        average + individual.fitness / population.length,
+      0
+    );
   }
 
   _reset() {
@@ -124,20 +138,22 @@ class Simulation {
 
     this.currentGeneration += 1;
 
+    this.history = this.history.concat(this.population);
     this.population = [...elites, ...children];
   }
 
-  // TODO: Add stats
   _getState() {
     const userState = this.getState();
-    return Object.assign(
-      {},
-      {
-        top: this.getTopIndividual(this.population),
-        population: this.population,
-      },
-      userState
-    );
+    return {
+      ...userState,
+      population: this.population,
+      currentGeneration: this.currentGeneration,
+      top: this.top,
+      averageFitness: this.averageFitness,
+      maxGenerations: this.maxGenerations,
+      popSize: this.popSize,
+      history: this.history,
+    };
   }
 
   // Optional Override
