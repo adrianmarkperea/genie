@@ -7,7 +7,7 @@
 Simply install from npm:
 
 ```bash
-npm install --save genie.js
+npm install --save @adrianperea/genie.js
 ```
 
 ## Nomenclature
@@ -39,7 +39,7 @@ To illustrate the steps, here is a simple program that tries to find the binary 
 If you haven't already, install the library from npm:
 
 ```bash
-npm install --save genie.js
+npm install --save @adrianperea/genie.js
 ```
 
 Next, we need to choose a `Chromosome` that represents our `Individual`. Our target is the string `1010101010101010`, so we can use the built-in `BinaryChromosome`:
