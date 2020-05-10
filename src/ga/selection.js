@@ -8,16 +8,17 @@ export function getSelectionFunction(type) {
     throw new Error('No type was supplied');
   }
 
-  // TODO: implement other types of selection methods
   switch (type) {
     case 'rws':
       return rouletteWheel;
+    case 'sus':
+      return stochasticUniversalSampling;
     default:
       throw new Error(`type ${type} is not a valid selection function type`);
   }
 }
 
-export function rouletteWheel(population, num) {
+function rouletteWheel(population, num) {
   const wheel = _makeWheel(population);
 
   const parents = Array(num)
@@ -25,6 +26,27 @@ export function rouletteWheel(population, num) {
     .map(() => _getParentByRouletteWheel(wheel, population));
 
   return parents;
+}
+
+function _makeWheel(population) {
+  const totalFitness = population.reduce(
+    (total, individual) => total + individual.fitness,
+    0
+  );
+
+  const relativeFitnesses = population.map(
+    (individual) => individual.fitness / totalFitness
+  );
+
+  const wheel = relativeFitnesses.reduce((probabilities, fitness, index) => {
+    index === 0
+      ? probabilities.push(fitness)
+      : probabilities.push(probabilities[index - 1] + fitness);
+
+    return probabilities;
+  }, []);
+
+  return wheel;
 }
 
 function _getParentByRouletteWheel(wheel, population) {
@@ -55,23 +77,22 @@ function _modifiedBinarySearch(array, target, l = 0, r = array.length - 1) {
   }
 }
 
-function _makeWheel(population) {
-  const totalFitness = population.reduce(
-    (total, individual) => total + individual.fitness,
-    0
+function stochasticUniversalSampling(population, num) {
+  const wheel = _makeWheel(population);
+
+  // Since the wheel is normalized to [0..1],
+  // we simply get the pointer the locations by slicing 1
+  // with the number of parents to keep
+  const pointerDistance = 1 / num;
+
+  const start = Math.random() * pointerDistance;
+  const pointers = Array(num)
+    .fill(null)
+    .map((_, i) => start + i * pointerDistance);
+
+  const parentIndices = pointers.map((pointer) =>
+    _modifiedBinarySearch(wheel, pointer)
   );
 
-  const relativeFitnesses = population.map(
-    (individual) => individual.fitness / totalFitness
-  );
-
-  const wheel = relativeFitnesses.reduce((probabilities, fitness, index) => {
-    index === 0
-      ? probabilities.push(fitness)
-      : probabilities.push(probabilities[index - 1] + fitness);
-
-    return probabilities;
-  }, []);
-
-  return wheel;
+  return parentIndices.map((index) => population[index]);
 }
