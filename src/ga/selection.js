@@ -34,6 +34,7 @@ function _makeWheel(population) {
     (total, individual) => total + individual.fitness,
     0
   );
+
   const relativeFitnesses = population.map(
     (individual) => individual.fitness / totalFitness
   );

@@ -16,6 +16,8 @@ class Individual {
       );
     });
 
+    likeness.fitness = 0;
+
     return likeness;
   }
 }

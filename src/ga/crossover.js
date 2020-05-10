@@ -63,7 +63,7 @@ export function _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo) {
 export function uniform(chromosomeOne, chromosomeTwo) {
   const probabilities = Array(chromosomeOne.length)
     .fill(null)
-    .forEach(() => Math.random());
+    .map(() => Math.random());
   return _uniform(chromosomeOne, chromosomeTwo, probabilities);
 }
 
