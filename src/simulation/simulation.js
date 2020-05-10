@@ -41,6 +41,7 @@ class Simulation {
     this.top = null;
     this.averageFitness = 0;
     this.history = [];
+    this.rafId = null;
 
     this.onInit = onInit;
     this.onUpdate = onUpdate;
@@ -51,8 +52,17 @@ class Simulation {
   }
 
   start() {
-    while (!this.finished) {
-      while (!this.updateFinished) {
+    this.rafId = setTimeout(() => this.loop(), 1 / 60);
+  }
+
+  stop() {
+    clearTimeout(this.rafId);
+    this.rafId = null;
+  }
+
+  loop() {
+    if (!this.finished) {
+      if (!this.updateFinished) {
         this._update();
       }
 
@@ -62,6 +72,7 @@ class Simulation {
       if (!this.finished) {
         this._generate();
       }
+      this.rafId = setTimeout(() => this.loop(), 1 / 60);
     }
   }
 
