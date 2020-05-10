@@ -113,7 +113,6 @@ class Simulation {
     const children = Array(this.popSize - elites.length)
       .fill(null)
       .map(() => {
-        // TODO: Fix rand between bug
         const p1Index = randBetween(0, parents.length - 1);
         const p2Index = randBetween(0, parents.length - 1);
         const parentOne = parents[p1Index];
