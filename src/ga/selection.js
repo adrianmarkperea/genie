@@ -27,11 +27,32 @@ export function rouletteWheel(population, num) {
   return parents;
 }
 
-// TODO: Probably change this to binary search
 function _getParentByRouletteWheel(wheel, population) {
   const chance = Math.random();
-  const index = wheel.map((p) => chance < p).indexOf(true);
+  const index = _modifiedBinarySearch(wheel, chance);
   return population[index];
+}
+
+function _modifiedBinarySearch(array, target, l = 0, r = array.length - 1) {
+  if (l > r) {
+    return -1;
+  }
+
+  const m = Math.floor((l + r) / 2);
+  if (
+    (m !== 0 && array[m - 1] < target && target <= array[m]) ||
+    (m === 0 && target <= array[m])
+  ) {
+    return m;
+  } else if (m === 0 && target <= array[m]) {
+    return m;
+  } else if (array[m] < target) {
+    return _modifiedBinarySearch(array, target, m + 1, r);
+  } else if (array[m] > target) {
+    return _modifiedBinarySearch(array, target, l, m - 1);
+  } else {
+    return -1;
+  }
 }
 
 function _makeWheel(population) {
