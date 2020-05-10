@@ -4,6 +4,10 @@ class Individual {
     this.dna = dna;
   }
 
+  getDna(index) {
+    return this.dna[index].genes;
+  }
+
   addChromosome(chromosome) {
     this.dna.push(chromosome);
   }
