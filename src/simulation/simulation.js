@@ -1,5 +1,5 @@
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
-import { crossover, getSelectionFunction, mutate } from '../ga';
+import { crossover, selection, mutate } from '../ga';
 import { randBetween } from '../utils/random';
 
 class Simulation {
@@ -29,7 +29,7 @@ class Simulation {
     this.popSize = popSize;
     this.maxGenerations = maxGenerations;
     this.numParents = numParents;
-    this.selection = getSelectionFunction(selection);
+    this.selection = selection;
     this.crossover = crossover;
     this.mutationRate = mutationRate;
     this.elitism = elitism;
@@ -109,7 +109,7 @@ class Simulation {
         .slice(0, this.numParents);
     }
 
-    const parents = this.selection(this.population, this.numParents);
+    const parents = selection(this.population, this.numParents, this.selection);
     const children = Array(this.popSize - elites.length)
       .fill(null)
       .map(() => {

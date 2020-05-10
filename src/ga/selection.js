@@ -1,3 +1,8 @@
+export function selection(population, numParents, type) {
+  const selectionFunction = getSelectionFunction(type);
+  return selectionFunction(population, numParents);
+}
+
 export function getSelectionFunction(type) {
   if (type === undefined) {
     throw new Error('No type was supplied');
