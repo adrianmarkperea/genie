@@ -1,5 +1,5 @@
 export function mutate(child, rate, mutator) {
-  if (mutator !== undefined) {
+  if (mutator !== null) {
     return mutator(child, rate);
   } else {
     return _mutateByChromosome(child, rate);

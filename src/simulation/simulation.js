@@ -1,5 +1,5 @@
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
-import { Crossover, Selection, Mutate } from '../ga';
+import { Selection, Crossover, Mutate, Optimizer } from '../ga';
 import { randBetween } from '../utils/random';
 
 class Simulation {
@@ -11,7 +11,9 @@ class Simulation {
     numParents = 10,
     selection = Selection.rouletteWheel,
     crossover = Crossover.onepoint,
+    mutator = null,
     mutationRate = 0.01,
+    optimizer = Optimizer.maximizer,
     elitism = false,
     onInit = null,
     onUpdate = null,
@@ -33,7 +35,9 @@ class Simulation {
     this.numParents = numParents;
     this.selection = selection;
     this.crossover = crossover;
+    this.mutator = mutator;
     this.mutationRate = mutationRate;
+    this.optimizer = optimizer;
     this.elitism = elitism;
 
     this.population = Array(popSize).fill(null);
@@ -98,7 +102,8 @@ class Simulation {
         (individual.fitness = this.calculateFitness(individual, this.data))
     );
 
-    this.top = this.getTopIndividual(this.population);
+    this.population = this.population.sort(this.optimizer);
+    this.top = this.population[0];
     this.averageFitness = this._getAverageFitness();
 
     this.onCalculateFitness && this.onCalculateFitness(this._getState());
@@ -149,7 +154,8 @@ class Simulation {
         const parentTwo = parents[randBetween(0, parents.length)];
         const child = Mutate.mutate(
           Crossover.crossover(parentOne, parentTwo, this.crossover),
-          this.mutationRate
+          this.mutationRate,
+          this.mutator
         );
         return child;
       });
@@ -176,19 +182,6 @@ class Simulation {
 
   // Optional Override
   init() {}
-
-  // Optional Override
-  getTopIndividual(population) {
-    const top = population.reduce((current, individual) => {
-      if (current === null) {
-        return individual;
-      } else {
-        return individual.fitness > current.fitness ? individual : current;
-      }
-    }, null);
-
-    return top;
-  }
 
   // Optional Override
   getState() {
