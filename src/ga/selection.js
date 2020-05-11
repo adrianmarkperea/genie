@@ -34,9 +34,14 @@ function _makeWheel(population) {
     0
   );
 
-  const relativeFitnesses = population.map(
-    (individual) => individual.fitness / totalFitness
-  );
+  // If all individuals have 0 fitness,
+  // we should make all individuals have equal chances of getting chosen
+  const relativeFitnesses =
+    totalFitness !== 0
+      ? population.map((individual) => individual.fitness / totalFitness)
+      : Array(population.length)
+          .fill(null)
+          .map(() => 1 / population.length);
 
   const wheel = relativeFitnesses.reduce((probabilities, fitness, index) => {
     index === 0

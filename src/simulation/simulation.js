@@ -138,10 +138,8 @@ class Simulation {
     const children = Array(this.popSize - elites.length)
       .fill(null)
       .map(() => {
-        const p1Index = randBetween(0, parents.length - 1);
-        const p2Index = randBetween(0, parents.length - 1);
-        const parentOne = parents[p1Index];
-        const parentTwo = parents[p2Index];
+        const parentOne = parents[randBetween(0, parents.length)];
+        const parentTwo = parents[randBetween(0, parents.length)];
         const child = crossover(parentOne, parentTwo, this.crossover);
         mutate(child, this.mutationRate);
         return child;
