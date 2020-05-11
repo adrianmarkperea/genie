@@ -1,5 +1,5 @@
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
-import { crossover, selection, mutate } from '../ga';
+import { Crossover, Selection, Mutate } from '../ga';
 import { randBetween } from '../utils/random';
 
 class Simulation {
@@ -9,8 +9,8 @@ class Simulation {
     popSize = 100,
     maxGenerations = 1000,
     numParents = 10,
-    selection = 'rws',
-    crossover = 'uniform',
+    selection = Selection.rouletteWheel,
+    crossover = Crossover.onepoint,
     mutationRate = 0.01,
     elitism = false,
     onInit = null,
@@ -137,14 +137,20 @@ class Simulation {
         .slice(0, this.numParents);
     }
 
-    const parents = selection(this.population, this.numParents, this.selection);
+    const parents = Selection.selection(
+      this.population,
+      this.numParents,
+      this.selection
+    );
     const children = Array(this.popSize - elites.length)
       .fill(null)
       .map(() => {
         const parentOne = parents[randBetween(0, parents.length)];
         const parentTwo = parents[randBetween(0, parents.length)];
-        const child = crossover(parentOne, parentTwo, this.crossover);
-        mutate(child, this.mutationRate);
+        const child = Mutate.mutate(
+          Crossover.crossover(parentOne, parentTwo, this.crossover),
+          this.mutationRate
+        );
         return child;
       });
 

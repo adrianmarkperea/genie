@@ -1,4 +1,12 @@
-export function mutate(child, rate) {
+export function mutate(child, rate, mutator) {
+  if (mutator !== undefined) {
+    return mutator(child, rate);
+  } else {
+    return _mutateByChromosome(child, rate);
+  }
+}
+
+function _mutateByChromosome(child, rate) {
   child.dna = child.dna.map((chromosome) => {
     const mutatedGenes = chromosome.genes.map((gene) =>
       Math.random() < rate ? chromosome.mutate(gene) : gene
@@ -6,4 +14,6 @@ export function mutate(child, rate) {
 
     return chromosome.constructor.fromGenes(mutatedGenes);
   });
+
+  return child;
 }

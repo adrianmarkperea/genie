@@ -1,21 +1,5 @@
-export function selection(population, numParents, type) {
-  const selectionFunction = getSelectionFunction(type);
+function selection(population, numParents, selectionFunction) {
   return selectionFunction(population, numParents);
-}
-
-export function getSelectionFunction(type) {
-  if (type === undefined) {
-    throw new Error('No type was supplied');
-  }
-
-  switch (type) {
-    case 'rws':
-      return rouletteWheel;
-    case 'sus':
-      return stochasticUniversalSampling;
-    default:
-      throw new Error(`type ${type} is not a valid selection function type`);
-  }
 }
 
 function rouletteWheel(population, num) {
@@ -101,3 +85,5 @@ function stochasticUniversalSampling(population, num) {
 
   return parentIndices.map((index) => population[index]);
 }
+
+export { selection, rouletteWheel, stochasticUniversalSampling };
