@@ -5,6 +5,7 @@ import { randBetween } from '../utils/random';
 class Simulation {
   constructor({
     prototype,
+    data,
     popSize = 100,
     maxGenerations = 1000,
     numParents = 10,
@@ -26,6 +27,7 @@ class Simulation {
     }
 
     this.prototype = prototype;
+    this.data = data;
     this.popSize = popSize;
     this.maxGenerations = maxGenerations;
     this.numParents = numParents;
@@ -92,7 +94,8 @@ class Simulation {
 
   _calculateFitness() {
     this.population.forEach(
-      (individual) => (individual.fitness = this.calculateFitness(individual))
+      (individual) =>
+        (individual.fitness = this.calculateFitness(individual, this.data))
     );
 
     this.top = this.getTopIndividual(this.population);
@@ -194,7 +197,7 @@ class Simulation {
   // Optional Override
   reset() {}
 
-  calculateFitness(individual) {
+  calculateFitness(individual, data) {
     throw new Error('method `calculateFitness` must be implemented');
   }
 
