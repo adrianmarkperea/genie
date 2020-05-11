@@ -171,7 +171,7 @@ sim.start();
 
 Here's the program in action:
 
-![](https://gfycat.com/pointlessheartfeltbengaltiger)
+![](genie-test.gif)
 
 The left number represents the fitness, and the associated binary string. Great!
 
