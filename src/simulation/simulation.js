@@ -196,12 +196,14 @@ class Simulation {
   // Optional Override
   reset() {}
 
-  calculateFitness(individual, data) {
-    throw new Error('method `calculateFitness` must be implemented');
+  // Optional Override
+  shouldFinish(top) {
+    // Run until max generations are exhausted by default
+    return false;
   }
 
-  shouldFinish(top) {
-    throw new Error('method `shouldFinish` must be implemented');
+  calculateFitness(individual, data) {
+    throw new Error('method `calculateFitness` must be implemented');
   }
 }
 
