@@ -1,7 +1,7 @@
 class Individual {
   constructor(dna = []) {
     this.fitness = 0;
-    this.dna = dna;
+    this.dna = Array.isArray(dna) ? dna : [dna];
   }
 
   getDna(index) {
