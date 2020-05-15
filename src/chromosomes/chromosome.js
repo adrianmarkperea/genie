@@ -2,6 +2,14 @@
 
 class Chromosome {
   constructor(length, generate, mutate, genes) {
+    if (length === undefined) {
+      throw new Error('length should be defined');
+    }
+
+    if (generate === undefined) {
+      throw new Error('generate() should be defined');
+    }
+
     this.length = length;
     this.generate = generate;
 
@@ -23,8 +31,8 @@ class Chromosome {
     return new Chromosome(this.length, this.generate, this.mutate, genes);
   }
 
-  copyWithLength(length) {
-    return new Chromosome(length, this.generate, this.mutate);
+  createRandomCopy() {
+    return new Chromosome(this.length, this.generate, this.mutate);
   }
 }
 

@@ -1,10 +1,12 @@
 import { Individual } from '../src/individual';
-import ChromosomeStub from './chromosome-stub';
+import { Chromosome } from '../src/chromosomes';
 
 import chai from 'chai';
 const { assert } = chai;
 
 describe('Individual', function () {
+  const mock = new Chromosome(6, () => 'A');
+
   it('Should have a fitness of 0 when instantiated', function () {
     const individual = new Individual();
     assert.equal(individual.fitness, 0);
@@ -16,39 +18,20 @@ describe('Individual', function () {
   });
 
   it('Should accept a dna as a constructor argument', function () {
-    const dna = [ChromosomeStub.fromLength(5)];
+    const dna = [mock];
 
     const individual = new Individual(dna);
 
     assert.equal(individual.dna[0], dna[0]);
   });
 
-  it('Should return an individual chromsome when dna length is only one', function () {
-    const individual = new Individual();
-    const chromosome = ChromosomeStub.fromLength(5);
-
-    individual.addChromosome(chromosome);
-
-    assert.equal(individual.dna[0], chromosome);
-  });
-
   describe('#addChromosome()', function () {
     it('Should add new chromosomes to the dna', function () {
       const individual = new Individual();
-      const chromosome = ChromosomeStub.fromLength(5);
 
-      individual.addChromosome(chromosome);
+      individual.addChromosome(mock);
 
-      assert.equal(individual.dna[0], chromosome);
-    });
-
-    it('Should reference the same chromosome that was added', function () {
-      const individual = new Individual();
-      const chromosome = ChromosomeStub.fromLength(5);
-
-      individual.addChromosome(chromosome);
-
-      assert.equal(individual.dna[0], chromosome);
+      assert.equal(individual.dna[0], mock);
     });
   });
 
@@ -63,9 +46,8 @@ describe('Individual', function () {
 
     it('Should have the same dna length', function () {
       const individual = new Individual();
-      const chromosome = ChromosomeStub.fromLength(5);
 
-      individual.addChromosome(chromosome);
+      individual.addChromosome(mock);
       const likeness = individual.fromTheLikenessOf();
 
       assert.equal(individual.dna.length, likeness.dna.length);
@@ -73,9 +55,8 @@ describe('Individual', function () {
 
     it('Should not have the same dna reference', function () {
       const individual = new Individual();
-      const chromosome = ChromosomeStub.fromLength(5);
 
-      individual.addChromosome(chromosome);
+      individual.addChromosome(mock);
       const likeness = individual.fromTheLikenessOf();
 
       assert.notEqual(likeness.dna, individual.dna);
@@ -83,8 +64,8 @@ describe('Individual', function () {
 
     it('Should not have the same chromosome reference', function () {
       const individual = new Individual();
-      const chromosomeOne = ChromosomeStub.fromLength(5);
-      const chromosomeTwo = ChromosomeStub.fromLength(5);
+      const chromosomeOne = mock.createRandomCopy();
+      const chromosomeTwo = mock.createRandomCopy();
 
       individual.addChromosome(chromosomeOne);
       individual.addChromosome(chromosomeTwo);
@@ -96,15 +77,15 @@ describe('Individual', function () {
 
     it('Should have the same chromosome type', function () {
       const individual = new Individual();
-      const chromosomeOne = ChromosomeStub.fromLength(5);
-      const chromosomeTwo = ChromosomeStub.fromLength(5);
+      const chromosomeOne = mock.createRandomCopy();
+      const chromosomeTwo = mock.createRandomCopy();
 
       individual.addChromosome(chromosomeOne);
       individual.addChromosome(chromosomeTwo);
       const likeness = individual.fromTheLikenessOf();
 
-      assert.instanceOf(likeness.dna[0], ChromosomeStub);
-      assert.instanceOf(likeness.dna[1], ChromosomeStub);
+      assert.instanceOf(likeness.dna[0], Chromosome);
+      assert.instanceOf(likeness.dna[1], Chromosome);
     });
   });
 });

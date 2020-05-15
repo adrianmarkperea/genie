@@ -1,39 +1,42 @@
 import { Chromosome } from '../src/chromosomes';
-import ChromosomeStub from './chromosome-stub';
 
 import chai from 'chai';
 const { assert } = chai;
 
-describe('Chromosome ABC', function () {
-  it('Should throw an error when instantiated', function () {
+describe('Chromosome', function () {
+  it('Should throw an error if instantiated without length', function () {
     assert.throws(() => new Chromosome());
   });
-});
 
-describe('MockChromosome', function () {
-  const genes = ['A', 'A', 'A', 'A', 'A'];
-  const badGenes = ['A', 'B', 'C'];
-  const length = 5;
-
-  it('Should not throw an error when instantiated', function () {
-    assert.doesNotThrow(() => new ChromosomeStub());
+  it('Should throw an error when instantiated without generate', function () {
+    assert.throws(() => new Chromosome(4));
   });
 
-  it('Should be able to be created from genes', function () {
-    const chromosome = ChromosomeStub.fromGenes(genes);
-
-    assert.sameOrderedMembers(chromosome.genes, genes);
-    assert.equal(chromosome.length, length);
+  it('Should have a mutate method when not provided', function () {
+    const mock = new Chromosome(4, () => 'A');
+    assert.isDefined(mock.mutate);
   });
 
-  it('Should throw an error when supplied with genes not part of charset', function () {
-    assert.throws(() => ChromosomeStub.fromGenes(badGenes));
+  it('Should have genes when not provided', function () {
+    const mock = new Chromosome(4, () => 'A');
+    assert.isDefined(mock.genes);
   });
 
-  it('Should be able to be created from length', function () {
-    const chromosome = ChromosomeStub.fromLength(length);
+  it('Should return a new chromosome when copied with genes', function () {
+    const mock = new Chromosome(4, () => 'A');
+    const newGenes = ['A', 'A', 'A', 'A'];
 
-    assert.sameOrderedMembers(chromosome.genes, genes);
-    assert.equal(chromosome.length, length);
+    const copy = mock.copyWithGenes(newGenes);
+
+    assert.instanceOf(copy, Chromosome);
+    assert.includeMembers(copy.genes, newGenes);
+  });
+
+  it('Should return a new chromosome when creating a random copy', function () {
+    const mock = new Chromosome(4, () => 'A');
+
+    const copy = mock.createRandomCopy();
+
+    assert.instanceOf(copy, Chromosome);
   });
 });
