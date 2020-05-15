@@ -24,7 +24,7 @@ function _onepoint(chromosomeOne, chromosomeTwo, point) {
     return i < point ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.constructor.fromGenes(childGenes);
+  return chromosomeOne.copyWithGenes(childGenes);
 }
 
 function multipoint(chromosomeOne, chromosomeTwo) {
@@ -39,7 +39,7 @@ function _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo) {
     return i < pointOne || i >= pointTwo ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.constructor.fromGenes(childGenes);
+  return chromosomeOne.copyWithGenes(childGenes);
 }
 
 function uniform(chromosomeOne, chromosomeTwo) {
@@ -56,7 +56,7 @@ function _uniform(chromosomeOne, chromosomeTwo, probabilities) {
     return probability < 0.5 ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.constructor.fromGenes(childGenes);
+  return chromosomeOne.copyWithGenes(childGenes);
 }
 
 export { crossover, onepoint, multipoint, uniform };

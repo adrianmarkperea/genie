@@ -15,9 +15,7 @@ class Individual {
   fromTheLikenessOf() {
     const likeness = new Individual();
     this.dna.forEach((chromosome) => {
-      likeness.addChromosome(
-        chromosome.constructor.fromLength(chromosome.length)
-      );
+      likeness.addChromosome(chromosome.copyWithLength(chromosome.length));
     });
 
     likeness.fitness = 0;

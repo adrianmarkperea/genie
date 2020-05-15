@@ -1,39 +1,30 @@
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
 
 class Chromosome {
-  constructor() {
-    if (this.constructor === Chromosome) {
-      throw new Error('Cannot instantiate abstract class');
+  constructor(length, generate, mutate, genes) {
+    this.length = length;
+    this.generate = generate;
+
+    if (mutate === undefined) {
+      this.mutate = (genes, rate) =>
+        genes.map((gene) => (Math.random() < rate ? generate() : gene));
+    } else {
+      this.mutate = mutate;
+    }
+
+    if (genes === undefined) {
+      this.genes = Array(length).fill(null).map(generate);
+    } else {
+      this.genes = genes;
     }
   }
 
-  static fromGenes(genes) {
-    if (!genes.every((gene) => this.charset.includes(gene))) {
-      throw new Error(
-        `Supplied genes [${genes}] is not compatible with charset`
-      );
-    }
-
-    const chromosome = new this();
-    chromosome.length = genes.length;
-    chromosome.genes = genes;
-
-    return chromosome;
+  copyWithGenes(genes) {
+    return new Chromosome(this.length, this.generate, this.mutate, genes);
   }
 
-  static fromLength(length) {
-    const chromosome = new this();
-    chromosome.length = length;
-    chromosome.genes = Array(length).fill(null).map(chromosome.generate);
-    return chromosome;
-  }
-
-  generate() {
-    throw new Error('method `generate()` must be implemented.');
-  }
-
-  mutate(gene) {
-    return this.generate();
+  copyWithLength(length) {
+    return new Chromosome(length, this.generate, this.mutate);
   }
 }
 

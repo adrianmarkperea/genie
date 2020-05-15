@@ -11,7 +11,6 @@ class Simulation {
     numParents = 10,
     selection = Selection.rouletteWheel,
     crossover = Crossover.onepoint,
-    mutator = null,
     mutationRate = 0.01,
     optimizer = Optimizer.maximizer,
     elitism = false,
@@ -35,7 +34,6 @@ class Simulation {
     this.numParents = numParents;
     this.selection = selection;
     this.crossover = crossover;
-    this.mutator = mutator;
     this.mutationRate = mutationRate;
     this.optimizer = optimizer;
     this.elitism = elitism;
@@ -147,16 +145,18 @@ class Simulation {
       this.numParents,
       this.selection
     );
+
     const children = Array(this.popSize - elites.length)
       .fill(null)
       .map(() => {
         const parentOne = parents[randBetween(0, parents.length)];
         const parentTwo = parents[randBetween(0, parents.length)];
+
         const child = Mutate.mutate(
           Crossover.crossover(parentOne, parentTwo, this.crossover),
-          this.mutationRate,
-          this.mutator
+          this.mutationRate
         );
+
         return child;
       });
 
