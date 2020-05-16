@@ -1,7 +1,5 @@
-/*eslint no-unused-vars: ["error", { "args": "none" }]*/
-
 class Chromosome {
-  constructor(length, generate, mutate, genes) {
+  constructor(length, generate, mutate) {
     if (length === undefined) {
       throw new Error('length should be defined');
     }
@@ -20,20 +18,35 @@ class Chromosome {
       this.mutate = mutate;
     }
 
-    if (genes === undefined) {
-      this.genes = Array(length).fill(null).map(generate);
-    } else {
-      this.genes = genes;
+    this.genes = Array(length).fill(null);
+  }
+
+  _init() {
+    this.genes = this.genes.map(this.generate);
+  }
+
+  setGenes(genes) {
+    if (genes.length !== this.length) {
+      throw new Error(
+        `Expected genes of length ${this.length}. Got ${genes.length}`
+      );
     }
+
+    this.genes = genes;
   }
 
   copyWithGenes(genes) {
-    return new Chromosome(this.length, this.generate, this.mutate, genes);
+    const copy = new Chromosome(this.length, this.generate, this.mutate);
+    copy.setGenes(genes);
+
+    return copy;
   }
 
   createRandomCopy() {
-    return new Chromosome(this.length, this.generate, this.mutate);
+    const copy = new Chromosome(this.length, this.generate, this.mutate);
+    copy._init();
+    return copy;
   }
 }
 
-export default Chromosome;
+export { Chromosome };

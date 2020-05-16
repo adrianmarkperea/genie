@@ -24,4 +24,4 @@ class Individual {
   }
 }
 
-export default Individual;
+export { Individual };

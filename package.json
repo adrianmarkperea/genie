@@ -1,7 +1,7 @@
 {
   "name": "@adrianperea/genie.js",
-  "version": "0.1.0",
-  "description": "A highly extensible genetic algorithm library for JavaScript",
+  "version": "1.0.0",
+  "description": "A highly flexible, data-agnostic, and UI-independent Genetic Algorithm Library",
   "main": "lib/index.js",
   "scripts": {
     "test": "nyc mocha",
@@ -20,10 +20,11 @@
   },
   "keywords": [
     "javascript",
-    "genetic-algorithms",
+    "genetic algorithm",
     "evolution",
-    "evolutionary",
-    "optimization"
+    "optimization",
+    "AI",
+    "Artificial Intelligence"
   ],
   "author": "Adrian Mark Perea",
   "license": "MIT",

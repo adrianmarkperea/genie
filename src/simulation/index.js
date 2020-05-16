@@ -1,1 +1,1 @@
-export { default as Simulation } from './simulation';
+export { Simulation } from './simulation';

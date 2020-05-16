@@ -1,6 +1,19 @@
 # genie.js
 
-**genie.js** is a simple, highly-extensible, data-agnostic, and UI-agnostic genetic algorithm (GA) library for JavaScript. It's for developers who want to rapidly experiment with genetic algorithms without going through all the trouble of setting up all the boilerplate.
+**genie.js** is a highly flexible, data-agnostic, and UI-independent Genetic Algorithm library written in JavaScript by [Adrian Perea](https://twitter.com/adrianmarkperea).
+
+## Why Genie.js?
+Current implementations of GA in JavaScript either:
++ Make too many assumptions about your data (no flexibility)
++ Make too little assumptions about your data (too much flexibility)
+
+Having too little flexibility limits the problems the library can solve. Having too much flexibility introduces more surface area for problems. An ideal API, then, is:
++ flexible enough so different data models can be accomodated
++ rigid enough that problems from different domains are abstracted and worked with
+
+This is precisely the API **genie.js** offers. Now you can focus on only writing code that concerns your problem. Leave the rest to genie. 😉
+
+Furthermore, genie doesn't make any assumptions about your UI. *Lifecycle Hooks* allow you to plug and play any UI that you choose.
 
 ## Installation
 
@@ -10,184 +23,251 @@ Simply install from npm:
 npm install --save @adrianperea/genie.js
 ```
 
-## Nomenclature
-**genie.js** breaks down the GA loop into three main components: the `Simulation`, the `Individual`, and the `Chromosome`.
-
-### 1. Simulation
-The `Simulation` is the workhorse of the entire library. It abstracts the entire GA loop so you can focus on getting results.
-
-A `Simulation` only needs three components to get started: a copy of the `Individual` that will serve as the prototype of your entire population, a function to calculate the fitness of each individual, and a stopping condition. These are the information that are specific to your use case, and thus need to be defined.
-
-### 2. Individual
-An `Individual` represent a single member of the population. Each `Individual` contains one or more `Chromosome`s that describe its DNA. At its simplest, the `Individual` is only a container for the `Chromosome`, but more sophisticated use cases allows for more intricate `Individual`s.
-
-### 3. Chromosome
-A `Chromosome` represents the *genetic material* (In GA parlance: *genotype*) that constitutes each Individual. The `Chromosome` is what gives each `Individual` its identity, and is used when comparing one `Individual` to another.
-
 ## Example Usage
 
-### Typical Workflow
-The typical workflow when using **genie.js** is as follows:
-1. Choose a `Chromosome` that represents your `Individual`. Alternatively, if none of the built-in `Chromosome`s fit your use case, you can easily create your own (see below).
-2. Create an `Individual` as a prototype for your entire population by composing it with one or more `Chromosome`s.
-3. Subclass the `Simulation` base class and define the `calculateFitness(individual)` and `shouldFinish(top)` functions. The former, as is evident, calculates the fitness for each individual, and the latter is a function that determines when the simulation should terminate, given the `top` individual (by default: individual with the highest fitness).
-4. Create a config object that contains the GA information like population size, mutation rate, etc. This is also where you define the lifecycle hooks that let notify you of the state of the simulation at different points (e.g. when fitness is calculated).
+Genie makes use of three primitive elements:
++ `Simulation`: responsible for running the GA loop
++ `Individual`: a container for Chromosomes (contains one or more)
++ `Chromosome`: a container for genes
 
-### String Search
-To illustrate the steps, here is a simple program that tries to find the binary string of length 16 `1010101010101010` using GA:
+Let's see how we can use these elements to build the quintessential GA example: the phrase guesser. Here, we'll let the algorithm guess the phrase: *to be or not to be*.
+(Just want the code? You can see the full implementation in `/examples`!)
 
-If you haven't already, install the library from npm:
-
-```bash
-npm install --save @adrianperea/genie.js
-```
-
-Next, we need to choose a `Chromosome` that represents our `Individual`. Our target is the string `1010101010101010`, so we can use the built-in `BinaryChromosome`:
+### 1) Do the necessary imports
 
 ```javascript
-const genie = require('genie.js')
-
-const { BinaryChromosome } = genie.chromosome;
+  const genie = require('@adrianperea/genie.js');
+  const { Simlation, Individual, Chromosome } = genie;
 ```
 
-Each `Chromosome` has a `fromLength(length)` factory method that creates a `Chromosome` with random data of length `length` from its charset. Since we're trying to guess a binary string of length 10, we should create a Chromosome using this length:
+### 2) Create a `Chromosome` instance.
+
+A `Chromosome` needs a `length` and a `generate()` method. `length` determines how many genes the `Chromosome` has, and the `generate()` method determines how each gene is randomly generated. In our case, we want each gene to be a randomly generated lower-case letter. Our generate function is then:
 
 ```javascript
-const myFirstChromosome = BinaryChromosome.fromLength(10)
+const generate = () => {
+  const charset = 'abcdefghijklmnopqrstuvwxyz '; 
+                                          // ^ don't forget that space!
+  const randomChar = charset[Math.floor(Math.random() * charset.length)];
+  return randomChar;
+}
+```
+We then creat the Chromosome as follows:
+```javascript
+// define our target first
+const target = 'to be or not to be'
+const myChromosome = new Chromosome(target.length, generate);
+                                 // ^^^^^^^^^^^^^ We want each of our chromosome to
+                                 //               be as long as our target
+
+// We can also do it like this
+const myChromome = new Chromosome(
+  target.length,
+  () => {
+    const charset = 'abcdefghijklmnopqrstuvwxyz ';
+    const randomChar = charset[Math.floor(Math.random() * charset.length)];
+    return randomChar;
+  }
+)
+```
+This is our chromosome *prototype*. It doesn't have genes yet. But genie will use this to create lower letter characters (remember our generate function?) to produce genes with a length of 18 (`len('to be or not to be') === 18`).
+
+If our Chromosome has a length of 4, we can expect genes to have the following form:
+
++ ['a', 'b', 'a', 'z']
++ ['t', 'w', 'v', 'm']
+
+*Note: A Chromosome also accepts a third argument `mutate()`. By default, each gene that should undergo mutation will just call the `generate()` method. See: Override the Mutate Method below.*
+
+### 3) Creating an Individual
+An `Individual` is, at the minimum, a composition of one or more Chromosomes. Most use cases (like ours) only need one `Chromosome`:
+
+```javascript
+const individual = new Individual(myChromosome);
 ```
 
-Afterwards, we then compose our `Individual` with it:
+More complex use cases might require more than one chromosome, and for each of those chromosomes to perform *crossover* and *mutation* independently. Genie makes this simple. Just pass an array of `Chromosome`s to the individual. 
 
+As a contrived example, say we wanted to guess two phrases:
 ```javascript
-const { Individual } = genie.individual;
+const individual = new Individual([myChromosome, myChromosome]);
 
-const myFirstPrototype = new Individual()
-myFirstPrototype.addChromosome(myFirstChromosome)
+// or alternatively
+const individual = new Individual();
+individual.addChromosome(myChromosome);
+individual.addChromosome(myChromosome);
 ```
 
-Using this, we can tell our `Simulation` what each `Individual` in the population should look like. Neat! In this, each `Individual` will be a combination of random `1`s and `0`s of length 10.
+Each chromosome then behaves independently. Neat!
 
-Next, we need to subclass the `Simulation` class, and define our `calculateFitness(individual)` and `shouldFinish(top)` methods:
+### 4) Creating the simulation
+
+4) Extend the `Simulation` class. You can override many methods of a `Simulation`, but as the bare minimum, you need to override the `calculateFitness()` method. A common (but not necessary) override is `shouldFinish()`, which determines if our target condition has already been met. Let's see how we can use both of these:
 
 ```javascript
-const { Simulation } = genie.simulation;
+class PhraseGuesser extends Simulation {
+  calculateFitness(individual, data) {
+    const fitness = individual
+      .getDna(0)
+      .reduce(
+        (current, gene, i) =>
+          gene === data.target.charAt(i) > current + 1 : current,
+        0
+      );
 
-class BinaryStringSimulation extends Simulation {
-  constructor(config) {
-    super(config);
-    // 1. We define a custom property to hold our target 1010101010
-    this.target = config.target;
+    return fitness / data.target.length;
   }
 
-  // 2. We calculate the fitness of each individual by how many digits did it get
-  // in the correct position (see example below):
-  // target: '1101', chromosome: '1101' # => fitness = 4
-  // target: '1101', chromosome: '1100' # => fitness = 3
-  calculateFitness(individual) {
-    const fitness = individual.dna[0].genes.reduce(
-      (fitness, gene, i) =>
-        this.target[i] === gene ? (fitness += 1) : fitness,
-      0
-    );
-
-    return fitness;
-  }
-
-  // 3. We tell our simulation when to stop. In this case,
-  // if the fitness of our top individual is equal to the length of our target
-  // (i.e. if each digit in each position is correct)
   shouldFinish(top) {
-    return top.fitness === this.target.length;
+    return top.fitness === 1;
   }
 }
 ```
+Let's break down what's happening with `calculateFitness()`.
+1. This method is called for each `Individual` in our population, and it's passed a reference to the current `Individual`, and custom `data` we pass our `Simulation`. In this case (as we will see later), we pass our `target`.
+2. It calls the `Individual`'s `getDna()` method to get a reference to the Chromosome we passed it earlier (now with genes!). This returns the genes automatically, as an array of single lower letter characters of length 18. (e.g. `['a', 'b', 'c', ... , 'r']`). Since we only have one `Chromosome`, we call `getDna(0)`.
+3. We call [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce) and compare each gene with each character of the target. We add 1 if it matches, and 0 otherwise.
+4. We then normalize the fitness by dividing it by the length of our target.
 
-Finally, we can define our `Simulation` config and then run it:
+`shouldFinish()` is much simpler:
++ After each `Individual`'s fitness is calculated, this is called with the top individual (by default, the `Individual` with the highest fitness). 
++ If `true` is returned, the `Simulation` is finished. If `false`, generate a new population.
++ By default, always returns `false`, i.e., stop once we reach our generation limit.
 
+### 5) Starting the Simulation
+We first create a config object that we will pass to the `Simulation`. There are many options that you can pass here, but let's stick to the minimum:
 ```javascript
 const config = {
-  prototype: myFirstPrototype,
-  target: '1010101010101010',
-  onCalculateFitness(state) {
-    // *
+  prototype: individual, // this will be the model of all other invidividuals in the population
+  data: { target }, // custom data that's passed to calculateFitness()
+}
+```
+Now, we can create and start our Phrase Guesser:
+```javascript
+const sim = new PhraseGuesser(config)
+sim.start();
+```
+If you run the program now, it's going to run the algorithm in the background, but you won't be able to see anything.
+
+At this point, our data layer is finished. Genie doesn't make any assumptions about your UI, so it provides a generic interface to get the data. 
+
+Genie makes it simple to plug in your own UI implementation through lifecycle hooks: data change listeners that bubble up to the UI layer. We can implement our hooks by passing them in the configuration. There are a few hooks available, but for now let's use this `onFitnessCalculated()` hook. Update your config object:
+```javascript
+const config = {
+  prototype: individual,
+  data: { target },
+  onFitnessCalculated(state) {
     console.log(state.top.fitness, state.top.getDna(0).join(''));
-  }
-};
-
-const sim = new BinaryStringSimulation(config);
+  },
+}
+```
+Finally, run the simulation again:
+```javascript
+const sim = new PhraseGuesser(config)
 sim.start();
 ```
-At the very least, you need to give your config your prototype. But that won't mean much without using any of the lifecycle hooks, since this is how the simulation updates you of the data changes. This is also what gives **genie.js** its flexibility: *since the state is decoupled from the UI, the user can choose whatever UI that's fit for the project.*
+It's working now! Great! You can view the full source code in `/examples`
 
- As I've mentioned earlier, each lifecycle method gives us back the current state of the simulation. By default, it provides us the entire population, and top individual, the average fitness, and other pertinent statistics.
+*Note: You can learn more about the other config options and the lifecycle hooks below*.
 
-Pay attention to the section marked in asterisk. Each `Individual`, such as `top`, has access to its `fitness` and to its `dna`. An `Individual`s DNA is an array of chromosomes. Since we only defined one `Chromosome`, we can simply index it using `getDna(0)`. This will return as with an array of length 10, with each element being a `1` or a `0`. We can then use `join()` in order to make this into a bit string.
+## Config Options
+The following canbe passed to `Simulation`. Note that only `prototype` is required, but most use cases should also include `data` and `onCalculateFitness`.
+| Name | Data Type | Required | Description |
+| ------------------ | ---------- | ----------- | ----------- |
+| prototype          | Individual | Yes         | The model for all other Individual's in the population |
+| data               | Any        | No (common) | Additional data for the simulation. Passed to calculateFitness() |
+| popSize            | Int        | No          | The number of individuals in the population (default: 100) |
+| maxGenerations     | Int        | No          | The number of generations to create (default: 1000) |
+| numParents         | Int        | No          | The number of to consider for crossover (default: popSize) |
+| selection          | Function   | No          | The function used for parent selection (default: Roulette Wheel Selection) |
+| crossover          | Function   | No          | The function used for crossover (default: One Point Crossover) |
+| mutationRate          | float   | No          | The rate of mutation (default: 0.01) |
+| optimizer          | Function   | No          | The function used to determine which individual is "more fit" (default: Maximizer) |
+| elitism            | Function   | No          | Flag for elitism. If true, the top N (= numParents) individuals will be retained for the next population  (default: false) |
+| onInit             | Function   | No          | Lifecycle Hook. Called after the population is initiated. (default: null) |
+| onUpdate           | Function   | No          | Lifecycle Hook. Called after the data model is updated. (default: null) |
+| onCalculateFitness | Function   | No (common) | Lifecycle Hook. Called after the fitnesses of each individual have been calculated. (default: null) |
+| onFinish           | Function   | No          | Lifecycle Hook. Called after the simulation is finished. (default: null) |
 
-Here's the full source:
+See *Genetic Operators* section below for other options for `selection`, `crossover`, and `optimizer`
 
+## Lifecycle Hooks and State
+Each lifecycle hook returns the `state` object. It has the follow keys:
+
+| name | description |
+| ---- | ----------- |
+| population | a reference to the current population |
+| currentGeneration | the current generation number |
+| top | the top individual for the current generation |
+| averageFitness | average fitness for all individuals |
+| maxGenerations | the maximum generations specified in the config object |
+| popSize | the population size specified in the config objectg |
+| history | provides state information of previous generations |
+
+Do you need custom state? See *Overridding Simulation Methods* section.
+
+## Overriding Simulation Methods
+| name | required | input | return | description |
+| ---- | -------- | ----- | ------ | ----------- |
+| calculateFitness | Yes | individual, data | number | Called with an individual and custom data passed to the config. Calculates the fitness of each individual. Return with the fitness value assigned to the individual.
+| init | No | none | none | Instantiate custom data inside the class. Called after population is initialized. |
+| getState | No | none | object | Define additional data to be returned when lifecycle methods are called. This gets combined with `state` |
+| update | No | none | boolean (default: true) | Override to update your custom data model. Return `true` to signal that the data model is already updated and that the program should proceed to calculating fitnesses. Return `false` to call the update loop again.By default, just returns `true`. |
+| reset |  No | none | none | Override to reset your custom data model. Called before a new generation is created and if the simulation is not yet finished. |
+| shoudlFinish | No | top | boolean (default: false) | Return `true` to terminate the simulation. Returns `false` by default, which makes the simulation run until max generations are reached. |
+
+## Genetic Operators
+### Selection Methods
+| name | library reference | description |
+| ---- | ----------------- | ----------- |
+| Roulette Wheel Selection | genie.ga.Selection.rouletteWheel | Select each parent by simulating a spin of the roulette wheel with chances weighted by an Individual's fitness |
+| Stochastic Universal Sampling | genie.ga.Selection.stochasticUniversalSampling | Similar to RouletteWheel selection, but provides evenly spaced points in which parents are selected. Allows lesser fit individuals to be chosen.
+
+### Crossover Methods
+| name | library reference | description |
+| ---- | ----------------- | ----------- |
+| One Point | genie.ga.Crossover.onepoint | Swaps genes between an individual point. First parent's genes are used first. |
+| Two Point | genie.ga.Crossover.multipoint | Swaps genes between two different points. First parent's genes are used at the head and tail. | 
+| Uniform | genie.ga.Crossover.uniform | 50-50% chance to select a gene from either parent for each gene. |
+
+### Optimizers
+| name | library reference | description |
+| ---- | ----------------- | ----------- |
+| Maximizer | genie.ga.Optimizer.maximizer | Individual's with higher fitness are "more fit". |
+| Minimizer | genie.ga.Optimizer.minimizer | Individual's with lower fitness are "more fit". |
+
+## Overriding Mutate
+By default, mutate is called for each gene of a `Chromosome`.
+In our example above, if we wanted to only mutate one gene per round, we can do the following:
 ```javascript
-const genie = require("genie.js");
+const generate = () => {
+    const charset = 'abcdefghijklmnopqrstuvwxyz ';
+    const randomChar = charset[Math.floor(Math.random() * charset.length)];
+    return randomChar;
+};
 
-const { BinaryChromosome } = genie.chromosomes;
-const myFirstChromosome = BinaryChromosome.fromLength(16);
-
-const { Individual } = genie.individual;
-const myFirstPrototype = new Individual();
-myFirstPrototype.addChromosome(myFirstChromosome);
-
-const { Simulation } = genie.simulation;
-class BinaryStringSimulation extends Simulation {
-  constructor(config) {
-    super(config);
-    this.target = config.target;
-  }
-
-  calculateFitness(individual) {
-    const fitness = individual.dna[0].genes.reduce(
-      (fitness, gene, i) =>
-        this.target[i] === gene ? (fitness += 1) : fitness,
-      0
-    );
-
-    return fitness;
-  }
-
-  shouldFinish(top) {
-    return top.fitness === this.target.length;
+const mutate = (genes, rate) => {
+  if (Math.random() < rate) {
+    const randomIndex = Math.floor(Math.random() * genes.length);
+    return genes.map((gene, i) => i === randomIndex ? generate() : gene)
   }
 }
 
-const config = {
-  prototype: myFirstPrototype,
-  target: "1010101010101010",
-  onCalculateFitness(state) {
-    console.log(state.top.fitness, state.top.getDna(0).join(""));
-  },
-};
-
-const sim = new BinaryStringSimulation(config);
-sim.start();
+const myChromosome = new Chromosome(
+  target.length,
+  generate,
+  mutate,
+)
 ```
-
-Here's the program in action:
-
-![](genie-test.gif)
-
-The left number represents the fitness, and the associated binary string. Great!
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate.
-
 ## Author
-**genie.js** was written by Adrian Perea. [Follow]() me on Twitter!
-You can also reach out to me on adrianmarkperea@gmail.com
+**genie.js** was written by Adrian Perea.
 
-## TODO
-- [ ] Add configuration information to README
-- [ ] Add public API reference to README
-- [ ] Add complex examples
+[Follow](https://twitter.com/adrianmarkperea) me on Twitter!
+You can also reach out to me on adrianmarkperea@gmail.com
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

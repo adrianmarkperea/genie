@@ -8,7 +8,7 @@ class Simulation {
     data,
     popSize = 100,
     maxGenerations = 1000,
-    numParents = 10,
+    numParents = popSize,
     selection = Selection.rouletteWheel,
     crossover = Crossover.onepoint,
     mutationRate = 0.01,
@@ -160,10 +160,22 @@ class Simulation {
         return child;
       });
 
+    this.updateHistory();
     this.currentGeneration += 1;
 
-    this.history = this.history.concat(this.population);
     this.population = [...elites, ...children];
+  }
+
+  updateHistory() {
+    this.history = [
+      ...this.history,
+      {
+        generation: this.currentGeneration,
+        population: this.population,
+        averageFitness: this.averageFitness,
+        topFitness: this.top.fitness,
+      },
+    ];
   }
 
   _getState() {
@@ -207,4 +219,4 @@ class Simulation {
   }
 }
 
-export default Simulation;
+export { Simulation };

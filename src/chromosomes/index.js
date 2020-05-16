@@ -1,1 +1,1 @@
-export { default as Chromosome } from './chromosome';
+export { Chromosome } from './chromosome';

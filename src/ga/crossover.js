@@ -8,7 +8,8 @@ function crossover(parentOne, parentTwo, crossoverFunc) {
 function _getChildDna(parentOne, parentTwo, crossoverFunc) {
   const childDna = parentOne.dna.map((parentOneChromosome, i) => {
     const parentTwoChromosome = parentTwo.dna[i];
-    return crossoverFunc(parentOneChromosome, parentTwoChromosome);
+    const genes = crossoverFunc(parentOneChromosome, parentTwoChromosome);
+    return parentOneChromosome.copyWithGenes(genes);
   });
   return childDna;
 }
@@ -24,7 +25,7 @@ function _onepoint(chromosomeOne, chromosomeTwo, point) {
     return i < point ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.copyWithGenes(childGenes);
+  return childGenes;
 }
 
 function multipoint(chromosomeOne, chromosomeTwo) {
@@ -39,7 +40,7 @@ function _multipoint(chromosomeOne, chromosomeTwo, pointOne, pointTwo) {
     return i < pointOne || i >= pointTwo ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.copyWithGenes(childGenes);
+  return childGenes;
 }
 
 function uniform(chromosomeOne, chromosomeTwo) {
@@ -56,7 +57,7 @@ function _uniform(chromosomeOne, chromosomeTwo, probabilities) {
     return probability < 0.5 ? geneOne : geneTwo;
   });
 
-  return chromosomeOne.copyWithGenes(childGenes);
+  return childGenes;
 }
 
 export { crossover, onepoint, multipoint, uniform };
