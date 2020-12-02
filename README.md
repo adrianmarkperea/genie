@@ -151,12 +151,12 @@ If you run the program now, it's going to run the algorithm in the background, b
 
 At this point, our data layer is finished. Genie doesn't make any assumptions about your UI, so it provides a generic interface to get the data. 
 
-Genie makes it simple to plug in your own UI implementation through lifecycle hooks: data change listeners that bubble up to the UI layer. We can implement our hooks by passing them in the configuration. There are a few hooks available, but for now let's use this `onFitnessCalculated()` hook. Update your config object:
+Genie makes it simple to plug in your own UI implementation through lifecycle hooks: data change listeners that bubble up to the UI layer. We can implement our hooks by passing them in the configuration. There are a few hooks available, but for now let's use this `onCalculateFitness()` hook. Update your config object:
 ```javascript
 const config = {
   prototype: individual,
   data: { target },
-  onFitnessCalculated(state) {
+  onCalculateFitness(state) {
     console.log(state.top.fitness, state.top.getDna(0).join(''));
   },
 }
