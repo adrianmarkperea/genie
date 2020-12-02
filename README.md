@@ -214,7 +214,7 @@ Do you need custom state? See *Overridding Simulation Methods* section.
 | getState | No | none | object | Define additional data to be returned when lifecycle methods are called. This gets combined with `state` |
 | update | No | none | boolean (default: true) | Override to update your custom data model. Return `true` to signal that the data model is already updated and that the program should proceed to calculating fitnesses. Return `false` to call the update loop again.By default, just returns `true`. |
 | reset |  No | none | none | Override to reset your custom data model. Called before a new generation is created and if the simulation is not yet finished. |
-| shoudlFinish | No | top | boolean (default: false) | Return `true` to terminate the simulation. Returns `false` by default, which makes the simulation run until max generations are reached. |
+| shouldFinish | No | top | boolean (default: false) | Return `true` to terminate the simulation. Returns `false` by default, which makes the simulation run until max generations are reached. |
 
 ## Genetic Operators
 ### Selection Methods
