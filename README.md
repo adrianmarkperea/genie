@@ -37,7 +37,7 @@ Let's see how we can use these elements to build the quintessential GA example: 
 
 ```javascript
   const genie = require('@adrianperea/genie.js');
-  const { Simlation, Individual, Chromosome } = genie;
+  const { Simulation, Individual, Chromosome } = genie;
 ```
 
 ### 2) Create a `Chromosome` instance.
@@ -57,7 +57,7 @@ We then creat the Chromosome as follows:
 // define our target first
 const target = 'to be or not to be'
 const myChromosome = new Chromosome(target.length, generate);
-                                 // ^^^^^^^^^^^^^ We want each of our chromosome to
+                                 // ^^^^^^^^^^^^^ We want each of our chromosomes to
                                  //               be as long as our target
 
 // We can also do it like this
@@ -111,7 +111,7 @@ class PhraseGuesser extends Simulation {
       .getDna(0)
       .reduce(
         (current, gene, i) =>
-          gene === data.target.charAt(i) > current + 1 : current,
+          gene === data.target.charAt(i) ? current + 1 : current,
         0
       );
 
