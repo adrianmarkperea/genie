@@ -37,7 +37,7 @@ Let's see how we can use these elements to build the quintessential GA example: 
 
 ```javascript
   const genie = require('@adrianperea/genie.js');
-  const { Simlation, Individual, Chromosome } = genie;
+  const { Simulation, Individual, Chromosome } = genie;
 ```
 
 ### 2) Create a `Chromosome` instance.
@@ -57,7 +57,7 @@ We then creat the Chromosome as follows:
 // define our target first
 const target = 'to be or not to be'
 const myChromosome = new Chromosome(target.length, generate);
-                                 // ^^^^^^^^^^^^^ We want each of our chromosome to
+                                 // ^^^^^^^^^^^^^ We want each of our chromosomes to
                                  //               be as long as our target
 
 // We can also do it like this
@@ -111,7 +111,7 @@ class PhraseGuesser extends Simulation {
       .getDna(0)
       .reduce(
         (current, gene, i) =>
-          gene === data.target.charAt(i) > current + 1 : current,
+          gene === data.target.charAt(i) ? current + 1 : current,
         0
       );
 
@@ -151,12 +151,12 @@ If you run the program now, it's going to run the algorithm in the background, b
 
 At this point, our data layer is finished. Genie doesn't make any assumptions about your UI, so it provides a generic interface to get the data. 
 
-Genie makes it simple to plug in your own UI implementation through lifecycle hooks: data change listeners that bubble up to the UI layer. We can implement our hooks by passing them in the configuration. There are a few hooks available, but for now let's use this `onFitnessCalculated()` hook. Update your config object:
+Genie makes it simple to plug in your own UI implementation through lifecycle hooks: data change listeners that bubble up to the UI layer. We can implement our hooks by passing them in the configuration. There are a few hooks available, but for now let's use this `onCalculateFitness()` hook. Update your config object:
 ```javascript
 const config = {
   prototype: individual,
   data: { target },
-  onFitnessCalculated(state) {
+  onCalculateFitness(state) {
     console.log(state.top.fitness, state.top.getDna(0).join(''));
   },
 }
@@ -214,7 +214,7 @@ Do you need custom state? See *Overridding Simulation Methods* section.
 | getState | No | none | object | Define additional data to be returned when lifecycle methods are called. This gets combined with `state` |
 | update | No | none | boolean (default: true) | Override to update your custom data model. Return `true` to signal that the data model is already updated and that the program should proceed to calculating fitnesses. Return `false` to call the update loop again.By default, just returns `true`. |
 | reset |  No | none | none | Override to reset your custom data model. Called before a new generation is created and if the simulation is not yet finished. |
-| shoudlFinish | No | top | boolean (default: false) | Return `true` to terminate the simulation. Returns `false` by default, which makes the simulation run until max generations are reached. |
+| shouldFinish | No | top | boolean (default: false) | Return `true` to terminate the simulation. Returns `false` by default, which makes the simulation run until max generations are reached. |
 
 ## Genetic Operators
 ### Selection Methods
